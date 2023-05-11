@@ -2,8 +2,8 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('', all_in_one),
-    path('graph_only/', flightsGraph),
+    path('', flightsGraph),
+    path('all_in_one/', all_in_one),
     path('download/', download),
     path('parse/', parse)
 ]

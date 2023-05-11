@@ -20,10 +20,22 @@
     <h1>Активность самолетов</h1>
     <p>Здесь три графика, показывающие количиство самолетов в каждом часу</p>
     <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }} <input type="submit" value="Посмотреть" />
+        <div>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Посмотреть" />
+        </div>
     </form>
-
+    <p></p>
+    <div>
+        <button onclick="redirectToCustomLink()">Обновить данные</button>
+        <script>
+        function redirectToCustomLink() {
+          // Replace 'YOUR_CUSTOM_LINK' with your desired URL
+          window.location.href = 'http://flightactivity.ru/all_in_one';
+        }
+        </script>
+    </div>
     <h2>Все рейсы</h2>
     <canvas id="activityChart1" width="400" height="200"></canvas>
 

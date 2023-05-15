@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        canvas {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Активность самолетов</h1>
+    <p>Здесь три графика, показывающие количиство самолетов в каждом часу</p>
+    <form action="" method="post">
+        <div>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Посмотреть" />
+        </div>
+    </form>
+    <p></p>
+    <div>
+        <button onclick="redirectToCustomLink()">Обновить данные</button>
+        <script>
+        function redirectToCustomLink() {
+          // Replace 'YOUR_CUSTOM_LINK' with your desired URL
+          window.location.href = 'http://flightactivity.ru/all_in_one';
+        }
+        </script>
+    </div>
+    {% block content %}
+    {% endblock %}
+</div>
+</body>
+</html>

@@ -8,6 +8,47 @@ from datetime import datetime
 from pytz import timezone
 
 
+def companyGraph(request):
+    day_for_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
+    if request.method == 'POST':
+        form = DatePicker(request.POST)
+        if form.is_valid():
+            day_for_seek = form.cleaned_data["date_wig"]
+    else:
+        form = DatePicker({'date_wig': datetime.today()})
+
+    all_flights = Flights.objects.filter(eta_date=day_for_seek)
+    if all_flights.count() > 0:
+        companylist = list(all_flights.values_list('company', flat=True))
+        companylist = list(dict.fromkeys(companylist))
+
+        providedData = []
+        for company in companylist:
+            company_flights = all_flights.filter(company=company)
+            count_by_hours_all = []
+            for i in range(24):
+                count_by_hours_all.append(company_flights.filter(eta_time__hour=i).count())
+            providedData.append(count_by_hours_all)
+
+        providedData = json.dumps(providedData)
+        companylist = json.dumps(companylist)
+        context = {
+            'title': "Самолеты в толмачево",
+            'data': {
+                'providedData': providedData,
+                'companyList': companylist
+            },
+            'form': form
+        }
+        return render(request, 'flights/companies.html', context)
+
+    else:
+        context = {
+            'title': "Самолеты в толмачево",
+            'form': form
+        }
+        return render(request, 'flights/nodata.html', context)
+
 def flightsGraph(request):
     day_for_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')
     if request.method == 'POST':
@@ -18,7 +59,6 @@ def flightsGraph(request):
         form = DatePicker({'date_wig': datetime.today()})
 
     all_flights = Flights.objects.filter(eta_date=day_for_seek)
-    print(all_flights.count())
     if all_flights.count() > 0:
         depart_fights = all_flights.filter(is_depart=1)
         arrive_flights = all_flights.filter(is_depart=0)
@@ -54,17 +94,17 @@ def flightsGraph(request):
 
 def download(request):
     flights.parsing.save_tolmachovo_tables("/home/django_user/flights/flightdensity/flights/saved pages")
-    return flightsGraph(request)
+    return redirect(flightsGraph)
 
 
 def parse(request):
     flights.parsing.parse_saved_tolmachovo_html("/home/django_user/flights/flightdensity/flights/saved pages/page.html")
     flights.parsing.parse_saved_tolmachovo_html("/home/django_user/flights/flightdensity/flights/saved pages/page_tomorrow.html")
-    return flightsGraph(request)
+    return redirect(flightsGraph)
 
 
 def all_in_one(request):
     flights.parsing.save_tolmachovo_tables("/home/django_user/flights/flightdensity/flights/saved pages")
     flights.parsing.parse_saved_tolmachovo_html("/home/django_user/flights/flightdensity/flights/saved pages/page.html")
     flights.parsing.parse_saved_tolmachovo_html("/home/django_user/flights/flightdensity/flights/saved pages/page_tomorrow.html")
-    return flightsGraph(request)
+    return redirect(flightsGraph)

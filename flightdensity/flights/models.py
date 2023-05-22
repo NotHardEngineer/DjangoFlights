@@ -11,3 +11,4 @@ class Flights(models.Model):
     airport_iata = models.CharField(max_length=3)
     is_depart = models.BooleanField()
     plane_type = models.CharField(max_length=255, blank=True)
+    company = models.CharField(max_length=255)

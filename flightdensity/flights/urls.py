@@ -5,5 +5,6 @@ urlpatterns = [
     path('', flightsGraph),
     path('all_in_one/', all_in_one),
     path('download/', download),
-    path('parse/', parse)
+    path('parse/', parse),
+    path('companies/', companyGraph)
 ]

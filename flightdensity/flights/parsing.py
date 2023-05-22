@@ -36,7 +36,7 @@ def save_tolmachovo_tables(destination="saved pages", name='page'):
 
 
 def write_in_db(fnumber: str, shtime: str, shdate: str, etatime: str, etadate: str,
-                airport: str, isdep: bool, ftype: str):
+                airport: str, isdep: bool, ftype: str, company: str):
 
     shdate = dt.date(dt.date.today().year, month=int(shdate.split(".", 1)[1]), day=int(shdate.split(".", 1)[0]))
     shtime = dt.time(int(shtime.split(":", 1)[0]), int(shtime.split(":", 1)[1]))
@@ -50,10 +50,12 @@ def write_in_db(fnumber: str, shtime: str, shdate: str, etatime: str, etadate: s
             exist_flight.eta_time = etatime
         if exist_flight.eta_date != etadate:
             exist_flight.eta_date = etadate
+        if exist_flight.company == 'placeholder':
+            exist_flight.company = company
         exist_flight.save()
     except Flights.DoesNotExist:
         Flights.objects.create(number=fnumber, sh_time=shtime, sh_date=shdate, eta_time=etatime, eta_date=etadate, airport_iata=airport,
-                is_depart=isdep, plane_type=ftype)
+                is_depart=isdep, plane_type=ftype, company=company)
 
 
 def parse_saved_tolmachovo_html(target="saved pages/page.html"):
@@ -63,7 +65,7 @@ def parse_saved_tolmachovo_html(target="saved pages/page.html"):
 
     for flight in parse.find_all('article', class_='flight-item'):
         is_dep = False
-        number, s_time, s_date, e_time, e_date, airtype = ['' for i in range(6)]
+        number, s_time, s_date, e_time, e_date, airtype, company = ['' for i in range(7)]
         flightdata = [i.text.lower() for i in list(flight.find_all("li"))]
         for item in flightdata:
             itemtitle, itemdata = item.split(":", 1)
@@ -81,5 +83,7 @@ def parse_saved_tolmachovo_html(target="saved pages/page.html"):
                 s_date = delete_spaces(s_date)
             elif "номер рейса" in itemtitle:
                 number = delete_spaces(itemdata)
+            elif "компания" in itemtitle:
+                company = delete_spaces(itemdata)
         write_in_db(fnumber=number, shtime=s_time, shdate=s_date, etatime=e_time, etadate=e_date, airport='obv',
-                    isdep=is_dep, ftype=airtype)
+                    isdep=is_dep, ftype=airtype, company=company)

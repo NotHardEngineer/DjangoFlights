@@ -1,0 +1,55 @@
+{% extends 'flights/base.html' %}
+{% block content %}
+    <div>
+        <button onclick="redirectToCustomLink()">Данные по всем полётам</button>
+        <script>
+        function redirectToCustomLink() {
+          // Replace 'YOUR_CUSTOM_LINK' with your desired URL
+          window.location.href = 'http://flightactivity.ru/';
+        }
+        </script>
+    </div>
+<script>
+  // Provided data for the graph
+  var providedData = JSON.parse('{{ data.providedData|escapejs }}');
+  var companyList = JSON.parse('{{ data.companyList|escapejs }}');
+  var companyCount = providedData.length;
+
+  // Set desired width and height here as well
+  for (var i = 0; i < companyCount; i++) {
+    var canvas = document.createElement('canvas');
+    canvas.id = 'graph' + (i + 1);
+    document.body.appendChild(canvas);
+
+    var ctx = canvas.getContext('2d');
+    var chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+        datasets: [{
+          label: companyList[i],
+          data: providedData[i],
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Adjust the width and height of the chart container
+    var chartContainer = document.getElementById('graph' + (i + 1)).parentElement;
+    chartContainer.classList.add('container');
+    // Update the chart layout
+    chart.resize();
+  }
+</script>
+
+{% endblock %}

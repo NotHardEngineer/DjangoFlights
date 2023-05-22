@@ -1,6 +1,14 @@
 {% extends 'flights/base.html' %}
 {% block content %}
-
+    <div>
+        <button onclick="redirectToCustomLink()">Данные по компаниям</button>
+        <script>
+        function redirectToCustomLink() {
+          // Replace 'YOUR_CUSTOM_LINK' with your desired URL
+          window.location.href = 'http://flightactivity.ru/companies';
+        }
+        </script>
+    </div>
     <h2>Все рейсы</h2>
     <canvas id="activityChart1" width="400" height="200"></canvas>
 
@@ -23,7 +31,7 @@
         data: {
             labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
             datasets: [{
-                label: 'Всего саомлетов за час:',
+                label: 'Всего самолетов за час:',
                 data: data1,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',

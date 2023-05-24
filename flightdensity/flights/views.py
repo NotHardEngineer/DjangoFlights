@@ -22,20 +22,28 @@ def companyGraph(request):
         companylist = list(all_flights.values_list('company', flat=True))
         companylist = list(dict.fromkeys(companylist))
 
-        providedData = []
+        providedDataDep = []
+        providedDataArr = []
         for company in companylist:
             company_flights = all_flights.filter(company=company)
-            count_by_hours_all = []
+            company_depart_fights = company_flights.filter(is_depart=1)
+            company_arrive_flights = company_flights.filter(is_depart=0)
+            count_by_hours_dep = []
+            count_by_hours_arr = []
             for i in range(24):
-                count_by_hours_all.append(company_flights.filter(eta_time__hour=i).count())
-            providedData.append(count_by_hours_all)
+                count_by_hours_dep.append(company_depart_fights.filter(eta_time__hour=i).count())
+                count_by_hours_arr.append(company_arrive_flights.filter(eta_time__hour=i).count())
+            providedDataDep.append(count_by_hours_dep)
+            providedDataArr.append(count_by_hours_arr)
 
-        providedData = json.dumps(providedData)
+        providedDataDep = json.dumps(providedDataDep)
+        providedDataArr = json.dumps(providedDataArr)
         companylist = json.dumps(companylist)
         context = {
             'title': "Самолеты в толмачево",
             'data': {
-                'providedData': providedData,
+                'providedDataDep': providedDataDep,
+                'providedDataArr': providedDataArr,
                 'companyList': companylist
             },
             'form': form
@@ -48,6 +56,7 @@ def companyGraph(request):
             'form': form
         }
         return render(request, 'flights/nodata.html', context)
+
 
 def flightsGraph(request):
     day_for_seek = datetime.today().astimezone(tz=timezone("Asia/Novosibirsk")).date().strftime('%Y-%m-%d')

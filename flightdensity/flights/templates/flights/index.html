@@ -3,10 +3,10 @@
     <div>
         <button onclick="redirectToCustomLink()">Данные по компаниям</button>
         <script>
-        function redirectToCustomLink() {
-          // Replace 'YOUR_CUSTOM_LINK' with your desired URL
-          window.location.href = 'http://flightactivity.ru/companies';
-        }
+            function redirectToCustomLink() {
+                // Replace 'YOUR_CUSTOM_LINK' with your desired URL
+                window.location.href = 'http://flightactivity.ru/companies';
+            }
         </script>
     </div>
     <h2>Все рейсы</h2>
@@ -19,82 +19,118 @@
     <canvas id="activityChart3" width="400" height="200"></canvas>
 
 
-<script>
-    var data1 = JSON.parse('{{ data.data1|escapejs }}');
-    var data2 = JSON.parse('{{ data.data2|escapejs }}');
-    var data3 = JSON.parse('{{ data.data3|escapejs }}');
+    <script>
+        var data1 = JSON.parse('{{ data.data1|escapejs }}');
+        var data2 = JSON.parse('{{ data.data2|escapejs }}');
+        var data3 = JSON.parse('{{ data.data3|escapejs }}');
 
-    // Activity 1 Line Chart
-    var ctxActivity1 = document.getElementById('activityChart1').getContext('2d');
-    var activityChart1 = new Chart(ctxActivity1, {
-        type: 'bar',
-        data: {
-            labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
-            datasets: [{
-                label: 'Всего самолетов за час:',
-                data: data1,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
+        // Activity 1 Line Chart
+        var maxYScale = Math.max(...data1) + 1
+        var ctxActivity1 = document.getElementById('activityChart1').getContext('2d');
+        var activityChart1 = new Chart(ctxActivity1, {
+            type: 'bar',
+            data: {
+                labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+                datasets: [{
+                    label: 'Всего самолетов за час:',
+                    data: data1,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
 
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        {#stacked: true,#}
+                        min: 0,
+                        max: maxYScale,
+                        ticks: {
+                            stepSize: 1
+                        }
+
+                    },
+                    x: {
+                        beginAtZero: true,
+                        {#stacked: true#}
+                    }
                 }
             }
-        }
-    });
+        });
 
-    // Activity 2 Line Chart
-    var ctxActivity2 = document.getElementById('activityChart2').getContext('2d');
-    var activityChart2 = new Chart(ctxActivity2, {
-        type: 'bar',
-        data: {
-            labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
-            datasets: [{
-                label: 'Прилетающих самолетов за час',
-                data: data2,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
+        // Activity 2 Line Chart
+        maxYScale = Math.max(...data2) + 1
+        var ctxActivity2 = document.getElementById('activityChart2').getContext('2d');
+        var activityChart2 = new Chart(ctxActivity2, {
+            type: 'bar',
+            data: {
+                labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+                datasets: [{
+                    label: 'Прилетающих самолетов за час',
+                    data: data2,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        {#stacked: true,#}
+                        min: 0,
+                        max: maxYScale,
+                        ticks: {
+                            stepSize: 1
+                        }
+
+                    },
+                    x: {
+                        beginAtZero: true,
+                        {#stacked: true#}
+                    }
                 }
             }
-        }
-    });
+        });
 
-    // Activity 3 Line Chart
-    var ctxActivity3 = document.getElementById('activityChart3').getContext('2d');
-    var activityChart3 = new Chart(ctxActivity3, {
-        type: 'bar',
-        data: {
-            labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
-            datasets: [{
-                label: 'Улетающих самолетов за час',
-                data: data3,
-                backgroundColor: 'rgba(255, 205, 86, 0.2)',
-                borderColor: 'rgba(255, 205, 86, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
+        // Activity 3 Line Chart
+        maxYScale = Math.max(...data3) + 1
+        var ctxActivity3 = document.getElementById('activityChart3').getContext('2d');
+        var activityChart3 = new Chart(ctxActivity3, {
+            type: 'bar',
+            data: {
+                labels: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+                datasets: [{
+                    label: 'Улетающих самолетов за час',
+                    data: data3,
+                    backgroundColor: 'rgba(255, 205, 86, 0.2)',
+                    borderColor: 'rgba(255, 205, 86, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        {#stacked: true,#}
+                        min: 0,
+                        max: maxYScale,
+                        ticks: {
+                            stepSize: 1
+                        }
+
+                    },
+                    x: {
+                        beginAtZero: true,
+                        {#stacked: true#}
+                    }
                 }
             }
-        }
-    });
-</script>
+        });
+    </script>
 {% endblock %}

@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
-from flights.models import Flights
+from flights.models import Flights, Companies
 
 
 def delete_spaces(s: str):
@@ -17,7 +17,7 @@ def save_tolmachovo_tables(destination="saved pages", name='page'):
     chrome_options = Options()
     chrome_options.add_argument("--disable-extensions")
     chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--no-sandbox") # linux only
+    chrome_options.add_argument("--no-sandbox")  # linux only
     chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(urltosave)
@@ -37,26 +37,26 @@ def save_tolmachovo_tables(destination="saved pages", name='page'):
 
 def write_in_db(fnumber: str, shtime: str, shdate: str, etatime: str, etadate: str,
                 airport: str, isdep: bool, ftype: str, company: str):
-
     shdate = dt.date(dt.date.today().year, month=int(shdate.split(".", 1)[1]), day=int(shdate.split(".", 1)[0]))
     shtime = dt.time(int(shtime.split(":", 1)[0]), int(shtime.split(":", 1)[1]))
 
     etadate = dt.date(dt.date.today().year, month=int(etadate.split(".", 1)[1]), day=int(etadate.split(".", 1)[0]))
     etatime = dt.time(int(etatime.split(":", 1)[0]), int(etatime.split(":", 1)[1]))
 
-    try:
-        exist_flight = Flights.objects.get(number=fnumber, sh_time=shtime, sh_date=shdate)
-        if exist_flight.eta_time != etatime:
-            exist_flight.eta_time = etatime
-        if exist_flight.eta_date != etadate:
-            exist_flight.eta_date = etadate
-        if exist_flight.company == 'placeholder':
-            exist_flight.company = company
-        exist_flight.save()
-    except Flights.DoesNotExist:
-        Flights.objects.create(number=fnumber, sh_time=shtime, sh_date=shdate, eta_time=etatime, eta_date=etadate, airport_iata=airport,
-                is_depart=isdep, plane_type=ftype, company=company)
-
+    exist_flight, is_created = Flights.objects.update_or_create(
+        number=fnumber, sh_time=shtime, sh_date=shdate,
+        defaults={'number': fnumber,
+                  'sh_time': shtime,
+                  'sh_date': shdate,
+                  'eta_time': etatime,
+                  'eta_date': etadate,
+                  'airport_iata': airport,
+                  'is_depart': isdep,
+                  'plane_type': ftype,
+                  'company': company}
+    )
+    if not is_created:
+        Companies.objects.get_or_create(name=company)
 
 def parse_saved_tolmachovo_html(target="saved pages/page.html"):
     html_file = open(target, "r")
@@ -65,7 +65,7 @@ def parse_saved_tolmachovo_html(target="saved pages/page.html"):
 
     for flight in parse.find_all('article', class_='flight-item'):
         is_dep = False
-        number, s_time, s_date, e_time, e_date, airtype, company = ['' for i in range(7)]
+        number, s_time, s_date, e_time, e_date, airtype, company = ['' for _ in range(7)]
         flightdata = [i.text.lower() for i in list(flight.find_all("li"))]
         for item in flightdata:
             itemtitle, itemdata = item.split(":", 1)

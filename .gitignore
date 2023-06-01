@@ -1,0 +1,10 @@
+/venv/
+*.sqlite3
+*.log
+__pycache__/
+/flightdensity/flightdensity/secret.py
+/flightdensity/flights/migrations/
+/flightdensity/saved pages/page.html
+/flightdensity/saved pages/page_tomorrow.html
+/.idea/
+/flightdensity/flightdensity/secret_server.py

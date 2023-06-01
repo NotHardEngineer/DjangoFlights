@@ -86,9 +86,9 @@ def flightsGraph(request):
         context = {
             'title': "Самолеты в толмачево",
             'data': {
-                'data1': count_by_hours_all,
-                'data2': count_by_hours_dep,
-                'data3': count_by_hours_arr
+                'data_all': count_by_hours_all,
+                'data_dep': count_by_hours_dep,
+                'data_arr': count_by_hours_arr
             },
             'form': form
         }
@@ -102,18 +102,18 @@ def flightsGraph(request):
 
 
 def download(request):
-    flights.parsing.save_tolmachovo_tables("/home/django_user/flights/flightdensity/flights/saved pages")
+    flights.parsing.save_tolmachovo_tables()
     return redirect(flightsGraph)
 
 
 def parse(request):
-    flights.parsing.parse_saved_tolmachovo_html("/home/django_user/flights/flightdensity/flights/saved pages/page.html")
-    flights.parsing.parse_saved_tolmachovo_html("/home/django_user/flights/flightdensity/flights/saved pages/page_tomorrow.html")
+    flights.parsing.parse_saved_tolmachovo_html()
+    flights.parsing.parse_saved_tolmachovo_html(name='page_tomorrow')
     return redirect(flightsGraph)
 
 
 def all_in_one(request):
-    flights.parsing.save_tolmachovo_tables("/home/django_user/flights/flightdensity/flights/saved pages")
-    flights.parsing.parse_saved_tolmachovo_html("/home/django_user/flights/flightdensity/flights/saved pages/page.html")
-    flights.parsing.parse_saved_tolmachovo_html("/home/django_user/flights/flightdensity/flights/saved pages/page_tomorrow.html")
+    flights.parsing.save_tolmachovo_tables()
+    flights.parsing.parse_saved_tolmachovo_html()
+    flights.parsing.parse_saved_tolmachovo_html(name='page_tomorrow')
     return redirect(flightsGraph)

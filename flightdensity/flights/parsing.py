@@ -6,13 +6,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 from flights.models import Flights, Companies
-
+from flightdensity.settings import BASE_DIR
+import os
 
 def delete_spaces(s: str):
     return " ".join(s.split())
 
 
-def save_tolmachovo_tables(destination="saved pages", name='page'):
+def save_tolmachovo_tables(destination=os.path.join(BASE_DIR, "saved pages"), name='page'):
     urltosave = 'https://tolmachevo.ru/passengers/information/timetable'
     chrome_options = Options()
     chrome_options.add_argument("--disable-extensions")
@@ -58,7 +59,8 @@ def write_in_db(fnumber: str, shtime: str, shdate: str, etatime: str, etadate: s
     if not is_created:
         Companies.objects.get_or_create(name=company)
 
-def parse_saved_tolmachovo_html(target="saved pages/page.html"):
+def parse_saved_tolmachovo_html(destination=os.path.join(BASE_DIR, "saved pages"), name='page'):
+    target = destination + "/" + name + ".html"
     html_file = open(target, "r")
     index = html_file.read()
     parse = BeautifulSoup(index, 'lxml')

@@ -22,7 +22,7 @@ class Companies(models.Model):
     time_update = models.DateTimeField(auto_now=True)
     logo = models.ImageField(upload_to="photos/logo/")
     primary_color = models.CharField(max_length=6, default='000000')
-    secondary_color = models.CharField(max_length=6, default='#bb33dd')
+    secondary_color = models.CharField(max_length=6, default='bb33dd')
 
     def __str__(self):
         return self.name
